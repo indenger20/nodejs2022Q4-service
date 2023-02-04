@@ -651,6 +651,11 @@
     semver "^7.3.5"
     tar "^6.1.11"
 
+"@nestjs-addons/in-memory-db@^3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@nestjs-addons/in-memory-db/-/in-memory-db-3.0.3.tgz#789ab4f2a181bb49453b4587ddb4026620ab4f7f"
+  integrity sha512-E+/7ivsddNwXo+5c0CDBBlnDS7jhMlseOOOApkgxEB79siGeOEqvIIshlSCZF8gc27N4xSJ8WqpFhFZXVJB4Qw==
+
 "@nestjs/cli@^8.0.0":
   version "8.2.8"
   resolved "https://registry.yarnpkg.com/@nestjs/cli/-/cli-8.2.8.tgz#63e5b477f90e6d0238365dcc6236b95bf4f0c807"
