@@ -10,12 +10,11 @@ import { Track } from './entities/track.entity';
 @Injectable()
 export class TracksService {
   constructor(
-    @InjectInMemoryDBService('track')
+    @InjectInMemoryDBService('tracks')
     private db: InMemoryDBService<Track>,
   ) {}
 
   create(createTrackDto: CreateTrackDto) {
-    
     return 'This action adds a new track';
   }
 

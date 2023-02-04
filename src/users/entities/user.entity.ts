@@ -14,4 +14,9 @@ export class User implements InMemoryDBEntity {
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);
   }
+
+  update(newPassword: string) {
+    this.password = newPassword;
+    return this;
+  }
 }

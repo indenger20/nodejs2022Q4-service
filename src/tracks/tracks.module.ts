@@ -4,7 +4,7 @@ import { TracksController } from './tracks.controller';
 import { InMemoryDBModule } from '@nestjs-addons/in-memory-db';
 
 @Module({
-  imports: [InMemoryDBModule.forFeature('track', {})],
+  imports: [InMemoryDBModule.forFeature('tracks', {})],
   controllers: [TracksController],
   providers: [TracksService],
 })

@@ -50,16 +50,17 @@ export class UsersService {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
     }
 
-    const user = this.db.get(id);
-    if (!user) {
+    const userDto = this.db.get(id);
+    if (!userDto) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
-    if (user.password !== oldPassword) {
+    if (userDto.password !== oldPassword) {
       throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN);
     }
 
-    const updatedUser = { ...user, password: newPassword };
+    const user = new User(userDto);
+    const updatedUser = user.update(newPassword);
 
     this.db.update(updatedUser);
 
