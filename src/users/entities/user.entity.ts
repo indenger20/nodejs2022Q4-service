@@ -1,11 +1,10 @@
 import { InMemoryDBEntity } from '@nestjs-addons/in-memory-db';
-import { IsUUID, IsString } from 'class-validator';
+import { IsUUID } from 'class-validator';
 
 export class User implements InMemoryDBEntity {
   @IsUUID()
   id: string;
 
-  @IsString()
   login: string;
   password: string;
   version: number;
