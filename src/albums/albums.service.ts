@@ -3,8 +3,9 @@ import {
   InMemoryDBService,
 } from '@nestjs-addons/in-memory-db';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Validator } from 'src/share/validator';
 import { Track } from 'src/tracks/entities/track.entity';
-import { v4, validate } from 'uuid';
+import { v4 } from 'uuid';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
@@ -34,9 +35,8 @@ export class AlbumsService {
   }
 
   findOne(id: string) {
-    if (validate(id) === false) {
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
-    }
+    Validator.isIdUuid(id);
+
     const album = this.albumDb.get(id);
     if (!album) {
       throw new HttpException('Album not found', HttpStatus.NOT_FOUND);
@@ -45,9 +45,7 @@ export class AlbumsService {
   }
 
   update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    if (validate(id) === false) {
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
-    }
+    Validator.isIdUuid(id);
 
     const albumDto = this.albumDb.get(id);
     if (!albumDto) {
@@ -63,9 +61,7 @@ export class AlbumsService {
   }
 
   remove(id: string) {
-    if (validate(id) === false) {
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
-    }
+    Validator.isIdUuid(id);
 
     const album = this.albumDb.get(id);
     if (!album) {

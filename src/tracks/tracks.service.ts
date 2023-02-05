@@ -3,6 +3,7 @@ import {
   InMemoryDBService,
 } from '@nestjs-addons/in-memory-db';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Validator } from 'src/share/validator';
 import { v4, validate } from 'uuid';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
@@ -31,9 +32,8 @@ export class TracksService {
   }
 
   findOne(id: string) {
-    if (validate(id) === false) {
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
-    }
+    Validator.isIdUuid(id);
+
     const track = this.trackDb.get(id);
     if (!track) {
       throw new HttpException('Track not found', HttpStatus.NOT_FOUND);
@@ -42,9 +42,7 @@ export class TracksService {
   }
 
   update(id: string, updateTrackDto: UpdateTrackDto) {
-    if (validate(id) === false) {
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
-    }
+    Validator.isIdUuid(id);
 
     const trackDto = this.trackDb.get(id);
     if (!trackDto) {
@@ -60,9 +58,7 @@ export class TracksService {
   }
 
   remove(id: string) {
-    if (validate(id) === false) {
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
-    }
+    Validator.isIdUuid(id);
 
     const track = this.trackDb.get(id);
     if (!track) {

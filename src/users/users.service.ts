@@ -3,6 +3,7 @@ import {
   InMemoryDBService,
 } from '@nestjs-addons/in-memory-db';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Validator } from 'src/share/validator';
 import { v4, validate } from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -35,9 +36,8 @@ export class UsersService {
   }
 
   findOne(id: string) {
-    if (validate(id) === false) {
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
-    }
+    Validator.isIdUuid(id);
+
     const user = this.db.get(id);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -46,9 +46,7 @@ export class UsersService {
   }
 
   update(id: string, { oldPassword, newPassword }: UpdateUserDto) {
-    if (validate(id) === false) {
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
-    }
+    Validator.isIdUuid(id);
 
     const userDto = this.db.get(id);
     if (!userDto) {
@@ -68,9 +66,7 @@ export class UsersService {
   }
 
   remove(id: string) {
-    if (validate(id) === false) {
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
-    }
+    Validator.isIdUuid(id);
 
     const user = this.db.get(id);
     if (!user) {

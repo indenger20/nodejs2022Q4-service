@@ -3,7 +3,8 @@ import {
   InMemoryDBService,
 } from '@nestjs-addons/in-memory-db';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { v4, validate } from 'uuid';
+import { Validator } from 'src/share/validator';
+import { v4 } from 'uuid';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
@@ -30,9 +31,8 @@ export class ArtistsService {
   }
 
   findOne(id: string) {
-    if (validate(id) === false) {
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
-    }
+    Validator.isIdUuid(id);
+
     const artist = this.db.get(id);
     if (!artist) {
       throw new HttpException('Artist not found', HttpStatus.NOT_FOUND);
@@ -41,9 +41,7 @@ export class ArtistsService {
   }
 
   update(id: string, updateArtistDto: UpdateArtistDto) {
-    if (validate(id) === false) {
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
-    }
+    Validator.isIdUuid(id);
 
     const artistDto = this.db.get(id);
     if (!artistDto) {
@@ -59,9 +57,7 @@ export class ArtistsService {
   }
 
   remove(id: string) {
-    if (validate(id) === false) {
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
-    }
+    Validator.isIdUuid(id);
 
     const artist = this.db.get(id);
     if (!artist) {

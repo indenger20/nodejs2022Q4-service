@@ -5,6 +5,7 @@ import {
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Album } from 'src/albums/entities/album.entity';
 import { Artist } from 'src/artists/entities/artist.entity';
+import { Validator } from 'src/share/validator';
 import { Track } from 'src/tracks/entities/track.entity';
 import { validate } from 'uuid';
 import { FavoriteEnum } from './interface/favoriteTypes';
@@ -45,9 +46,7 @@ export class FavoritesService {
   }
 
   private validateResoure(type: FavoriteEnum, id: string) {
-    if (validate(id) === false) {
-      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
-    }
+    Validator.isIdUuid(id);
 
     const resource = this[`${type}Db`].get(id);
 
