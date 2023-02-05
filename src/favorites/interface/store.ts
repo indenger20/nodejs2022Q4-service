@@ -1,7 +1,7 @@
 import { InMemoryDBConfig } from '@nestjs-addons/in-memory-db';
-import { FavoriteType } from './favoriteTypes';
+import { FavoriteEnum } from './favoriteTypes';
 
 export interface FavoriteStore extends InMemoryDBConfig {
-  id: FavoriteType;
+  id: FavoriteEnum;
   data: string[];
 }

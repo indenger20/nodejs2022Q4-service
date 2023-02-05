@@ -2,15 +2,16 @@ import {
   Controller,
   Get,
   Post,
-  Body,
-  Put,
   Param,
   Delete,
   HttpStatus,
   HttpCode,
+  Query,
+  ValidationPipe,
 } from '@nestjs/common';
+import { PostQueryDto } from './dto/post-query.dto';
 import { FavoritesService } from './favorites.service';
-import { FavoritesRepsonse } from './interface/response';
+import { FavoriteEnum } from './interface/favoriteTypes';
 
 @Controller('favs')
 export class FavoritesController {
@@ -22,15 +23,33 @@ export class FavoritesController {
     return this.favoritesService.findAll();
   }
 
-  @Post('/track/:id')
+  @Post('/:type/:id')
   @HttpCode(HttpStatus.CREATED)
-  create(@Param() params: { id: string }) {
-    return this.favoritesService.create('tracks', params.id);
+  create(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    params: PostQueryDto,
+  ) {
+    return this.favoritesService.create(params.type, params.id);
   }
 
-  @Delete('/track/:id')
+  @Delete('/:type/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
-    return this.favoritesService.remove('tracks', id);
+  remove(
+    @Param(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    params: PostQueryDto,
+  ) {
+    return this.favoritesService.remove(params.type, params.id);
   }
 }

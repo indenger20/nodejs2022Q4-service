@@ -1,1 +1,5 @@
-export type FavoriteType = 'artists' | 'albums' | 'tracks';
+export enum FavoriteEnum {
+  ARTIST = 'artist',
+  ALBUM = 'album',
+  TRACK = 'track',
+}

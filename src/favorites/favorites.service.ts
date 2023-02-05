@@ -3,9 +3,11 @@ import {
   InMemoryDBService,
 } from '@nestjs-addons/in-memory-db';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Album } from 'src/albums/entities/album.entity';
+import { Artist } from 'src/artists/entities/artist.entity';
 import { Track } from 'src/tracks/entities/track.entity';
 import { validate } from 'uuid';
-import { FavoriteType } from './interface/favoriteTypes';
+import { FavoriteEnum } from './interface/favoriteTypes';
 import { FavoriteStore } from './interface/store';
 
 @Injectable()
@@ -14,10 +16,24 @@ export class FavoritesService {
     @InjectInMemoryDBService('favorites')
     private db: InMemoryDBService<FavoriteStore>,
     @InjectInMemoryDBService('tracks')
-    private tracksDb: InMemoryDBService<Track>,
+    private trackDb: InMemoryDBService<Track>,
+    @InjectInMemoryDBService('albums')
+    private albumDb: InMemoryDBService<Album>,
+    @InjectInMemoryDBService('artists')
+    private artistDb: InMemoryDBService<Artist>,
   ) {}
 
-  private resolveEntity(type: FavoriteType) {
+  private typesMapper(type: FavoriteEnum) {
+    const types = {
+      [FavoriteEnum.ARTIST]: 'artists',
+      [FavoriteEnum.ALBUM]: 'albums',
+      [FavoriteEnum.TRACK]: 'tracks',
+    };
+
+    return types[type];
+  }
+
+  private resolveEntity(type: FavoriteEnum) {
     const entity = this.db.get(type);
 
     if (!entity) {
@@ -28,7 +44,7 @@ export class FavoritesService {
     return existingEntity;
   }
 
-  private validateResoure(type: FavoriteType, id: string) {
+  private validateResoure(type: FavoriteEnum, id: string) {
     if (validate(id) === false) {
       throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
     }
@@ -50,9 +66,10 @@ export class FavoritesService {
     });
 
     const result = favsWithData.reduce((acc, curr) => {
+      const key = this.typesMapper(curr.id);
       return {
         ...acc,
-        [curr.id]: curr.data,
+        [key]: curr.data,
       };
     }, {});
     return result;
@@ -66,7 +83,7 @@ export class FavoritesService {
     return result;
   }
 
-  create(type: FavoriteType, id: string) {
+  create(type: FavoriteEnum, id: string) {
     const favEntity = this.resolveEntity(type);
 
     this.validateResoure(type, id);
@@ -88,7 +105,7 @@ export class FavoritesService {
     return updatedEntity;
   }
 
-  remove(type: FavoriteType, id: string) {
+  remove(type: FavoriteEnum, id: string) {
     const favEntity = this.resolveEntity(type);
 
     this.validateResoure(type, id);
