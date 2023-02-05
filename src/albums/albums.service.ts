@@ -3,7 +3,7 @@ import {
   InMemoryDBService,
 } from '@nestjs-addons/in-memory-db';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Artist } from 'src/artists/entities/artist.entity';
+import { Track } from 'src/tracks/entities/track.entity';
 import { v4, validate } from 'uuid';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
@@ -14,8 +14,8 @@ export class AlbumsService {
   constructor(
     @InjectInMemoryDBService('albums')
     private albumDb: InMemoryDBService<Album>,
-    @InjectInMemoryDBService('artists')
-    private artistDb: InMemoryDBService<Artist>,
+    @InjectInMemoryDBService('tracks')
+    private trackDb: InMemoryDBService<Track>,
   ) {}
 
   create(createAlbumDto: CreateAlbumDto) {

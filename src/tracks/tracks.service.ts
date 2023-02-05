@@ -2,7 +2,8 @@ import {
   InjectInMemoryDBService,
   InMemoryDBService,
 } from '@nestjs-addons/in-memory-db';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { v4, validate } from 'uuid';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
@@ -11,26 +12,63 @@ import { Track } from './entities/track.entity';
 export class TracksService {
   constructor(
     @InjectInMemoryDBService('tracks')
-    private db: InMemoryDBService<Track>,
+    private trackDb: InMemoryDBService<Track>,
   ) {}
 
   create(createTrackDto: CreateTrackDto) {
-    return 'This action adds a new track';
+    const newTrack = new Track({
+      id: v4(),
+      ...createTrackDto,
+    });
+    const track = this.trackDb.create(newTrack);
+
+    return track;
   }
 
   findAll() {
-    return `This action returns all tracks`;
+    const tracks = this.trackDb.getAll();
+    return tracks;
   }
 
   findOne(id: string) {
-    return `This action returns a #${id} track`;
+    if (validate(id) === false) {
+      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+    }
+    const track = this.trackDb.get(id);
+    if (!track) {
+      throw new HttpException('Track not found', HttpStatus.NOT_FOUND);
+    }
+    return track;
   }
 
   update(id: string, updateTrackDto: UpdateTrackDto) {
-    return `This action updates a #${id} track`;
+    if (validate(id) === false) {
+      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+    }
+
+    const trackDto = this.trackDb.get(id);
+    if (!trackDto) {
+      throw new HttpException('Track not found', HttpStatus.NOT_FOUND);
+    }
+
+    const track = new Track(trackDto);
+    const updatedTrack = track.update(updateTrackDto);
+
+    this.trackDb.update(updatedTrack);
+
+    return updatedTrack;
   }
 
   remove(id: string) {
-    return `This action removes a #${id} track`;
+    if (validate(id) === false) {
+      throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+    }
+
+    const track = this.trackDb.get(id);
+    if (!track) {
+      throw new HttpException('Track not found', HttpStatus.NOT_FOUND);
+    }
+    this.trackDb.delete(id);
+    return null;
   }
 }

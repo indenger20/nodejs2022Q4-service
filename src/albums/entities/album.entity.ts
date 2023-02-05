@@ -18,6 +18,7 @@ export class Album implements InMemoryDBEntity {
     this.name = album.name;
     this.year = album.year;
     this.artistId = album.artistId;
+
     return this;
   }
 }

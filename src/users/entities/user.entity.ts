@@ -17,6 +17,7 @@ export class User implements InMemoryDBEntity {
 
   update(newPassword: string) {
     this.password = newPassword;
+
     return this;
   }
 }
