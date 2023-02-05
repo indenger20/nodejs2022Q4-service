@@ -1,7 +1,8 @@
+import { InMemoryDBEntity } from '@nestjs-addons/in-memory-db';
 import { IsUUID } from 'class-validator';
 import { UpdateArtistDto } from '../dto/update-artist.dto';
 
-export class Artist {
+export class Artist implements InMemoryDBEntity {
   @IsUUID()
   id: string;
 
