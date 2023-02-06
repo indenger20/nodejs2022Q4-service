@@ -16,10 +16,10 @@ export class Track implements InMemoryDBEntity {
   }
 
   update(track: UpdateTrackDto) {
-    this.name = track.name;
-    this.artistId = track.artistId;
-    this.albumId = track.albumId;
-    this.duration = track.duration;
+    this.name = track.name ?? this.name;
+    this.artistId = track.artistId ?? this.artistId;
+    this.albumId = track.albumId ?? this.albumId;
+    this.duration = track.duration ?? this.duration;
 
     return this;
   }

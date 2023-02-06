@@ -7,6 +7,7 @@ import { InMemoryDBModule } from '@nestjs-addons/in-memory-db';
   imports: [
     InMemoryDBModule.forFeature('albums', {}),
     InMemoryDBModule.forFeature('tracks', {}),
+    InMemoryDBModule.forFeature('artists', {}),
   ],
   controllers: [AlbumsController],
   providers: [AlbumsService],

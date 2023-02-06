@@ -3,8 +3,10 @@ import {
   InMemoryDBService,
 } from '@nestjs-addons/in-memory-db';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Album } from 'src/albums/entities/album.entity';
+import { Artist } from 'src/artists/entities/artist.entity';
 import { Validator } from 'src/share/validator';
-import { v4, validate } from 'uuid';
+import { v4 } from 'uuid';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
@@ -14,6 +16,10 @@ export class TracksService {
   constructor(
     @InjectInMemoryDBService('tracks')
     private trackDb: InMemoryDBService<Track>,
+    @InjectInMemoryDBService('artists')
+    private artistDb: InMemoryDBService<Artist>,
+    @InjectInMemoryDBService('albums')
+    private albumDb: InMemoryDBService<Album>,
   ) {}
 
   create(createTrackDto: CreateTrackDto) {
@@ -21,6 +27,18 @@ export class TracksService {
       id: v4(),
       ...createTrackDto,
     });
+
+    Validator.isResoureExists({
+      db: this.artistDb,
+      id: newTrack.artistId,
+      key: 'Artist',
+    });
+    Validator.isResoureExists({
+      db: this.albumDb,
+      id: newTrack.albumId,
+      key: 'Album',
+    });
+
     const track = this.trackDb.create(newTrack);
 
     return track;
@@ -50,7 +68,19 @@ export class TracksService {
     }
 
     const track = new Track(trackDto);
+
     const updatedTrack = track.update(updateTrackDto);
+
+    Validator.isResoureExists({
+      db: this.artistDb,
+      id: updatedTrack.artistId,
+      key: 'Artist',
+    });
+    Validator.isResoureExists({
+      db: this.albumDb,
+      id: updatedTrack.albumId,
+      key: 'Album',
+    });
 
     this.trackDb.update(updatedTrack);
 

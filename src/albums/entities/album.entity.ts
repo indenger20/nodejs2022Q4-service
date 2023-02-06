@@ -15,9 +15,9 @@ export class Album implements InMemoryDBEntity {
   }
 
   update(album: UpdateAlbumDto) {
-    this.name = album.name;
-    this.year = album.year;
-    this.artistId = album.artistId;
+    this.name = album.name ?? this.name;
+    this.year = album.year ?? this.year;
+    this.artistId = album.artistId ?? this.artistId;
 
     return this;
   }

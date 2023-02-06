@@ -3,7 +3,12 @@ import {
   InMemoryDBService,
 } from '@nestjs-addons/in-memory-db';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Album } from 'src/albums/entities/album.entity';
+import { FavoriteEnum } from 'src/favorites/interface/favoriteTypes';
+import { FavoriteStore } from 'src/favorites/interface/store';
 import { Validator } from 'src/share/validator';
+import { UpdateTrackDto } from 'src/tracks/dto/update-track.dto';
+import { Track } from 'src/tracks/entities/track.entity';
 import { v4 } from 'uuid';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
@@ -14,7 +19,54 @@ export class ArtistsService {
   constructor(
     @InjectInMemoryDBService('artists')
     private db: InMemoryDBService<Artist>,
+    @InjectInMemoryDBService('tracks')
+    private trackDb: InMemoryDBService<Track>,
+    @InjectInMemoryDBService('albums')
+    private albumDb: InMemoryDBService<Album>,
+    @InjectInMemoryDBService('favorites')
+    private favoriteDb: InMemoryDBService<FavoriteStore>,
   ) {}
+
+  private removeIdFromTracks(id: string) {
+    const tracks = this.trackDb.query((track) => track.artistId === id);
+
+    if (tracks.length) {
+      tracks.forEach((trackDto) => {
+        const track = new Track(trackDto);
+        const updatedTrack = track.update({ artistId: null });
+        this.trackDb.update(updatedTrack);
+      });
+    }
+  }
+
+  private removeIdFromAlbums(id: string) {
+    const albums = this.albumDb.query((album) => album.artistId === id);
+
+    if (albums.length) {
+      albums.forEach((albumDto) => {
+        const album = new Album(albumDto);
+        const updatedAlbum = album.update({ artistId: null });
+        this.albumDb.update(updatedAlbum);
+      });
+    }
+  }
+
+  private removeIdFromFav(id: string) {
+    const favs = this.favoriteDb.getAll();
+    const artistIds = favs.find((fav) => fav.id === FavoriteEnum.ARTIST);
+
+    const filteredIds = artistIds?.data.filter((artistId) => artistId !== id);
+    this.favoriteDb.update({
+      id: FavoriteEnum.ARTIST,
+      data: filteredIds,
+    } as FavoriteStore);
+  }
+
+  private removeFromResources(id: string) {
+    this.removeIdFromTracks(id);
+    this.removeIdFromAlbums(id);
+    this.removeIdFromFav(id);
+  }
 
   create(createArtistDto: CreateArtistDto) {
     const newArtist = new Artist({
@@ -64,6 +116,7 @@ export class ArtistsService {
       throw new HttpException('Artist not found', HttpStatus.NOT_FOUND);
     }
     this.db.delete(id);
+    this.removeFromResources(id);
     return null;
   }
 }

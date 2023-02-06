@@ -3,6 +3,7 @@ import {
   InMemoryDBService,
 } from '@nestjs-addons/in-memory-db';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Artist } from 'src/artists/entities/artist.entity';
 import { Validator } from 'src/share/validator';
 import { Track } from 'src/tracks/entities/track.entity';
 import { v4 } from 'uuid';
@@ -17,6 +18,8 @@ export class AlbumsService {
     private albumDb: InMemoryDBService<Album>,
     @InjectInMemoryDBService('tracks')
     private trackDb: InMemoryDBService<Track>,
+    @InjectInMemoryDBService('artists')
+    private artistDb: InMemoryDBService<Artist>,
   ) {}
 
   create(createAlbumDto: CreateAlbumDto) {
@@ -24,6 +27,13 @@ export class AlbumsService {
       id: v4(),
       ...createAlbumDto,
     });
+
+    Validator.isResoureExists({
+      db: this.artistDb,
+      id: newAlbum.artistId,
+      key: 'Artist',
+    });
+
     const album = this.albumDb.create(newAlbum);
 
     return album;
@@ -54,6 +64,12 @@ export class AlbumsService {
 
     const album = new Album(albumDto);
     const updatedAlbum = album.update(updateAlbumDto);
+
+    Validator.isResoureExists({
+      db: this.artistDb,
+      id: updatedAlbum.artistId,
+      key: 'Artist',
+    });
 
     this.albumDb.update(updatedAlbum);
 
