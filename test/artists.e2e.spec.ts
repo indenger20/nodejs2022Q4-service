@@ -6,7 +6,7 @@ import {
   shouldAuthorizationBeTested,
   removeTokenUser,
 } from './utils';
-import { artistsRoutes, tracksRoutes } from './endpoints';
+import { artistsRoutes, albumsRoutes, tracksRoutes } from './endpoints';
 
 const createArtistDto = {
   name: 'TEST_artist',
