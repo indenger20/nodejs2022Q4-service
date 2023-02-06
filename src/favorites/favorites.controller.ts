@@ -6,12 +6,10 @@ import {
   Delete,
   HttpStatus,
   HttpCode,
-  Query,
   ValidationPipe,
 } from '@nestjs/common';
 import { PostQueryDto } from './dto/post-query.dto';
 import { FavoritesService } from './favorites.service';
-import { FavoriteEnum } from './interface/favoriteTypes';
 
 @Controller('favs')
 export class FavoritesController {

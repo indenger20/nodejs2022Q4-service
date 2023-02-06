@@ -7,7 +7,6 @@ import { Album } from 'src/albums/entities/album.entity';
 import { Artist } from 'src/artists/entities/artist.entity';
 import { Validator } from 'src/share/validator';
 import { Track } from 'src/tracks/entities/track.entity';
-import { validate } from 'uuid';
 import { FavoriteEnum } from './interface/favoriteTypes';
 import { FavoriteStore } from './interface/store';
 
