@@ -5,6 +5,9 @@ import {
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Album } from 'src/albums/entities/album.entity';
 import { Artist } from 'src/artists/entities/artist.entity';
+import { FavoriteEnum } from 'src/favorites/interface/favoriteTypes';
+import { FavoriteStore } from 'src/favorites/interface/store';
+import { removeFromFavorites } from 'src/share/utils/helpers';
 import { Validator } from 'src/share/validator';
 import { v4 } from 'uuid';
 import { CreateTrackDto } from './dto/create-track.dto';
@@ -20,7 +23,17 @@ export class TracksService {
     private artistDb: InMemoryDBService<Artist>,
     @InjectInMemoryDBService('albums')
     private albumDb: InMemoryDBService<Album>,
+    @InjectInMemoryDBService('favorites')
+    private favoriteDb: InMemoryDBService<FavoriteStore>,
   ) {}
+
+  private removeIdFromFav(id: string) {
+    removeFromFavorites({ db: this.favoriteDb, id, type: FavoriteEnum.TRACK });
+  }
+
+  private removeFromResources(id: string) {
+    this.removeIdFromFav(id);
+  }
 
   create(createTrackDto: CreateTrackDto) {
     const newTrack = new Track({
@@ -95,6 +108,7 @@ export class TracksService {
       throw new HttpException('Track not found', HttpStatus.NOT_FOUND);
     }
     this.trackDb.delete(id);
+    this.removeFromResources(id);
     return null;
   }
 }

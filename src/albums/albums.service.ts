@@ -4,6 +4,12 @@ import {
 } from '@nestjs-addons/in-memory-db';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Artist } from 'src/artists/entities/artist.entity';
+import { FavoriteEnum } from 'src/favorites/interface/favoriteTypes';
+import { FavoriteStore } from 'src/favorites/interface/store';
+import {
+  removeFromFavorites,
+  removeFromResources,
+} from 'src/share/utils/helpers';
 import { Validator } from 'src/share/validator';
 import { Track } from 'src/tracks/entities/track.entity';
 import { v4 } from 'uuid';
@@ -20,7 +26,27 @@ export class AlbumsService {
     private trackDb: InMemoryDBService<Track>,
     @InjectInMemoryDBService('artists')
     private artistDb: InMemoryDBService<Artist>,
+    @InjectInMemoryDBService('favorites')
+    private favoriteDb: InMemoryDBService<FavoriteStore>,
   ) {}
+
+  private removeIdFromTracks(id: string) {
+    removeFromResources({
+      id,
+      db: this.trackDb,
+      key: 'albumId',
+      Model: Track,
+    });
+  }
+
+  private removeIdFromFav(id: string) {
+    removeFromFavorites({ db: this.favoriteDb, id, type: FavoriteEnum.ALBUM });
+  }
+
+  private removeFromResources(id: string) {
+    this.removeIdFromTracks(id);
+    this.removeIdFromFav(id);
+  }
 
   create(createAlbumDto: CreateAlbumDto) {
     const newAlbum = new Album({
@@ -84,6 +110,7 @@ export class AlbumsService {
       throw new HttpException('Album not found', HttpStatus.NOT_FOUND);
     }
     this.albumDb.delete(id);
+    this.removeFromResources(id);
     return null;
   }
 }

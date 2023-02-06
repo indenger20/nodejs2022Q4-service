@@ -14,8 +14,8 @@ export class Artist implements InMemoryDBEntity {
   }
 
   update(artist: UpdateArtistDto) {
-    this.grammy = artist.grammy;
-    this.name = artist.name;
+    this.grammy = artist.grammy !== undefined ? artist.grammy : this.grammy;
+    this.name = artist.name !== undefined ? artist.name : this.name;
 
     return this;
   }

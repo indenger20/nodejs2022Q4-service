@@ -6,8 +6,11 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Album } from 'src/albums/entities/album.entity';
 import { FavoriteEnum } from 'src/favorites/interface/favoriteTypes';
 import { FavoriteStore } from 'src/favorites/interface/store';
+import {
+  removeFromFavorites,
+  removeFromResources,
+} from 'src/share/utils/helpers';
 import { Validator } from 'src/share/validator';
-import { UpdateTrackDto } from 'src/tracks/dto/update-track.dto';
 import { Track } from 'src/tracks/entities/track.entity';
 import { v4 } from 'uuid';
 import { CreateArtistDto } from './dto/create-artist.dto';
@@ -28,38 +31,25 @@ export class ArtistsService {
   ) {}
 
   private removeIdFromTracks(id: string) {
-    const tracks = this.trackDb.query((track) => track.artistId === id);
-
-    if (tracks.length) {
-      tracks.forEach((trackDto) => {
-        const track = new Track(trackDto);
-        const updatedTrack = track.update({ artistId: null });
-        this.trackDb.update(updatedTrack);
-      });
-    }
+    removeFromResources({
+      id,
+      db: this.trackDb,
+      key: 'artistId',
+      Model: Track,
+    });
   }
 
   private removeIdFromAlbums(id: string) {
-    const albums = this.albumDb.query((album) => album.artistId === id);
-
-    if (albums.length) {
-      albums.forEach((albumDto) => {
-        const album = new Album(albumDto);
-        const updatedAlbum = album.update({ artistId: null });
-        this.albumDb.update(updatedAlbum);
-      });
-    }
+    removeFromResources({
+      id,
+      db: this.albumDb,
+      key: 'artistId',
+      Model: Album,
+    });
   }
 
   private removeIdFromFav(id: string) {
-    const favs = this.favoriteDb.getAll();
-    const artistIds = favs.find((fav) => fav.id === FavoriteEnum.ARTIST);
-
-    const filteredIds = artistIds?.data.filter((artistId) => artistId !== id);
-    this.favoriteDb.update({
-      id: FavoriteEnum.ARTIST,
-      data: filteredIds,
-    } as FavoriteStore);
+    removeFromFavorites({ db: this.favoriteDb, id, type: FavoriteEnum.ARTIST });
   }
 
   private removeFromResources(id: string) {

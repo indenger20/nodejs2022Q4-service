@@ -16,10 +16,14 @@ export class Track implements InMemoryDBEntity {
   }
 
   update(track: UpdateTrackDto) {
-    this.name = track.name ?? this.name;
-    this.artistId = track.artistId ?? this.artistId;
-    this.albumId = track.albumId ?? this.albumId;
-    this.duration = track.duration ?? this.duration;
+    console.log('track', track);
+
+    this.name = track.name !== undefined ? track.name : this.name;
+    this.artistId =
+      track.artistId !== undefined ? track.artistId : this.artistId;
+    this.albumId = track.albumId !== undefined ? track.albumId : this.albumId;
+    this.duration =
+      track.duration !== undefined ? track.duration : this.duration;
 
     return this;
   }

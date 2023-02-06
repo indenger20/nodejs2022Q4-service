@@ -1,3 +1,4 @@
+import { InMemoryDBService } from '@nestjs-addons/in-memory-db';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { validate } from 'uuid';
 
@@ -15,7 +16,7 @@ export class Validator {
   }: {
     key: string;
     id: string;
-    db: any;
+    db: InMemoryDBService<any>;
   }) {
     if (!id) {
       return;
