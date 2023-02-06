@@ -26,6 +26,7 @@ async function bootstrap() {
   writeFile('./doc/api.yml', JSON.stringify(document));
 
   SwaggerModule.setup('api', app, document);
+
   await app.listen(env.PORT ?? DEFAULT_PORT);
 }
 bootstrap();

@@ -23,7 +23,10 @@ export class Validator {
     }
     const resource = db.get(id);
     if (!resource) {
-      throw new HttpException(`${key} not found`, HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        `${key} not found`,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
   }
 }

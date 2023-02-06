@@ -24,13 +24,7 @@ export class FavoritesController {
   @Post('/:type/:id')
   @HttpCode(HttpStatus.CREATED)
   create(
-    @Param(
-      new ValidationPipe({
-        transform: true,
-        transformOptions: { enableImplicitConversion: true },
-        forbidNonWhitelisted: true,
-      }),
-    )
+    @Param()
     params: PostQueryDto,
   ) {
     return this.favoritesService.create(params.type, params.id);
@@ -39,13 +33,7 @@ export class FavoritesController {
   @Delete('/:type/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(
-    @Param(
-      new ValidationPipe({
-        transform: true,
-        transformOptions: { enableImplicitConversion: true },
-        forbidNonWhitelisted: true,
-      }),
-    )
+    @Param()
     params: PostQueryDto,
   ) {
     return this.favoritesService.remove(params.type, params.id);

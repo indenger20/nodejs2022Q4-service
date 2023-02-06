@@ -50,7 +50,10 @@ export class FavoritesService {
     const resource = this[`${type}Db`].get(id);
 
     if (!resource) {
-      throw new HttpException('Resource not found', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'Resource not found',
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
   }
 
@@ -63,13 +66,20 @@ export class FavoritesService {
       };
     });
 
-    const result = favsWithData.reduce((acc, curr) => {
-      const key = this.typesMapper(curr.id);
-      return {
-        ...acc,
-        [key]: curr.data,
-      };
-    }, {});
+    const result = favsWithData.reduce(
+      (acc, curr) => {
+        const key = this.typesMapper(curr.id);
+        return {
+          ...acc,
+          [key]: curr.data,
+        };
+      },
+      {
+        [this.typesMapper(FavoriteEnum.ARTIST)]: [],
+        [this.typesMapper(FavoriteEnum.ALBUM)]: [],
+        [this.typesMapper(FavoriteEnum.TRACK)]: [],
+      },
+    );
     return result;
   }
 

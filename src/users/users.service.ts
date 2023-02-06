@@ -16,7 +16,7 @@ export class UsersService {
     private db: InMemoryDBService<User>,
   ) {}
 
-  create({ login, password }: CreateUserDto) {
+  create({ login, password }: CreateUserDto): User {
     const newUser = new User({
       login,
       password,
@@ -26,8 +26,8 @@ export class UsersService {
       updatedAt: Date.now(),
     });
 
-    const user = this.db.create(newUser);
-    return user;
+    this.db.create(newUser);
+    return newUser;
   }
 
   findAll() {
